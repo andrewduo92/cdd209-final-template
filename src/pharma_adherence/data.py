@@ -30,7 +30,9 @@ class PharmaDataset:
         filepath = Path(filepath)
         filepath.parent.mkdir(parents=True, exist_ok=True)
         
-        self.df.to_csv(filepath)
+        #TODO: Save Dataframe to CSV
+        self.df.to_csv(filepath, index=False)
+        #not sure if this is correct *****
     
     def hist(self, column_name):
         if self.cleaned is False:
@@ -54,11 +56,11 @@ class PharmaDataset:
         if self.cleaned is False:
             raise ValueError("Run clean() first.")
         
-        patient_df = self.df[
-            self.df["patient_id"] == patient_id
-        ]
+        #TODO: Filter self.df to only include entries with specific patient_id given
+        #      Name this new dataframe "patient_df" and update 2nd parameter in return statment
+        patient_df = self.df[self.df['patient_id'] == patient_id]
 
-        return PatientAdherenceProfile(patient_id, patient_df)
+        return PatientAdherenceProfile(patient_id, self.df)
     
     def get_df(self):
         return self.df

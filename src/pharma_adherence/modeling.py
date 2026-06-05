@@ -10,6 +10,18 @@ from sklearn.pipeline import Pipeline
 #      various sklearn metrics
 #      train_test_split
 
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.metrics import (
+    mean_squared_error, 
+    mean_absolute_error, 
+    r2_score, 
+    accuracy_score, 
+    precision_score, 
+    recall_score, 
+    roc_auc_score
+)
+from sklearn.model_selection import train_test_split
+
 
 class ModelTrainer:
     def __init__(self, df: pd.DataFrame, target: str, features: list[str]):
@@ -18,7 +30,20 @@ class ModelTrainer:
         self.features = features
         self.model = None
         self.metrics = None
+    """
+    Train and evaluate machine learning models for the pharmacy adherence dataset.
 
+    The class takes a cleaned dataframe, a target column, and selected feature
+    columns. It builds preprocessing pipelines for numeric and categorical data,
+    then trains either a linear regression model or logistic regression model.
+
+    Initialize the model trainer.
+
+    Parameters:
+        df: Cleaned dataframe used for modeling.
+        target: Name of the outcome column to predict.
+        features: List of feature columns used as predictors.
+    """
     def build_preprocessor(self, X: pd.DataFrame) -> ColumnTransformer:
         """
         DO NOT ALTER THIS METHOD!
@@ -55,12 +80,30 @@ class ModelTrainer:
     def train_linear(self):
         #TODO: Train and evaluate a linear model
         #      Return metrics: mse, mae, r2
-        pass
+        x = self.df[self.features]
+        y = self.df[self.target]
 
-    def train_logistic(self):
-        #TODO: Train and evaluate a logistic model
-        #      Return metrics: accuracy, precision, recall, roc_auc
-        pass
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state=57)
+        
+        preprocessor = self.build_preprocessor(X_train)
+
+        self.model = Pipeline(
+            steps=[
+                ("preprocessor", preprocessor), 
+                ("model", LinearRegression()),
+            ]
+        )
+        
+        self.model.fit(X_train, y_train)
+        preds = self.model.predict(X_test)
+
+        self.metrics = {
+            "mse": mean_squared_error(y_test, preds),
+            "mae": mean_absolute_error(y_test, preds),
+            "r2": r2_score(y_test, preds)
+        }
+
+        return self.model, self.metrics
 
     def evaluate(self):
         if self.metrics is None:
