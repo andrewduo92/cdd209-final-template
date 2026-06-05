@@ -1,0 +1,40 @@
+[project]
+name = "pharma-adherence"
+version = "0.1.0"
+description = "Tools for cleaning, modeling, and visualizing pharmaceutical adherence data."
+requires-python = ">=3.10"
+readme = "README.md"
+
+license = { text = "MIT" }
+
+authors = [
+  { name = "Jane Doe", email = "jane.doe@ucsf.edu" }
+]
+
+dependencies = [
+  "matplotlib==3.10.0",
+  "numpy==2.3.1",
+  "pandas==2.3.1",
+  "scikit-learn==1.8.0",
+  "scipy==1.17.1",
+]
+
+[project.optional-dependencies]
+# Install these only if you need testing/dev tooling via `pip install .[dev]`
+dev = [
+  "pytest==8.4.1",
+  "setuptools==72.1.0",
+  "wheel==0.45.1",
+  "pip==26.0.1",
+]
+
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["pharma_adherence*"]
