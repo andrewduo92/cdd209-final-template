@@ -134,8 +134,27 @@ def clean_prescription_data(df: pd.DataFrame) -> pd.DataFrame:
     df.loc[df['copay_amount'] < 0, 'copay_amount'] = np.nan
 
     #TODO: adherence_flag
-    df['adherence_flag'] = _clean_text_series(df['adherence_flag']).replace({"yes": 1, "no": 0})
-    df.loc[~df['adherence_flag'].isin([0, 1]), 'adherence_flag'] = np.nan
+    # clean adherence_flag
+    adherence_text = _clean_text_series(df["adherence_flag"])
+
+    df["adherence_flag"] = adherence_text.replace({
+        "yes": 1,
+        "y": 1,
+        "true": 1,
+        "1": 1,
+        "1.0": 1,
+        "adherent": 1,
+        "no": 0,
+        "n": 0,
+        "false": 0,
+        "0": 0,
+        "0.0": 0,
+        "non-adherent": 0,
+        "nonadherent": 0,
+    })
+
+    df["adherence_flag"] = pd.to_numeric(df["adherence_flag"], errors="coerce")
+    df.loc[~df["adherence_flag"].isin([0, 1]), "adherence_flag"] = np.nan
 
     #TODO: proportion_days_covered (pdc)
     df['proportion_days_covered'] = _to_numeric_clean(df['proportion_days_covered'])
